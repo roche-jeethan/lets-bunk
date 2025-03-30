@@ -3,7 +3,11 @@
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 
-export default function AddAbsenceForm() {
+interface AddAbsenceFormProps {
+    userId: string;
+}
+
+export default function AddAbsenceForm({userId}: AddAbsenceFormProps) {
   const [subject, setSubject] = useState('');
   const [date, setDate] = useState('');
   const [reason, setReason] = useState('');

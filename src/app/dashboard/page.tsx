@@ -5,10 +5,12 @@ import AbsenceList from '@/components/dashboard/AbsenceList';
 import AddAbsenceForm from '@/components/dashboard/AddAbsenceForm';
 
 export default async function Dashboard() {
-  const supabase = createServerComponentClient({ cookies });
-  const { data: { session } } = await supabase.auth.getSession();
+  const cookieStore = cookies();
+  const supabase = createServerComponentClient({ cookies: () => cookieStore });
+  
+  const { data: { session }, error } = await supabase.auth.getSession();
 
-  if (!session) {
+  if (error || !session) {
     redirect('/auth/signin');
   }
 
@@ -20,11 +22,11 @@ export default async function Dashboard() {
           <div className="grid md:grid-cols-2 gap-6">
             <div>
               <h2 className="text-xl font-semibold mb-4">Add New Absence</h2>
-              <AddAbsenceForm />
+              <AddAbsenceForm userId={session.user.id} />
             </div>
             <div>
               <h2 className="text-xl font-semibold mb-4">Recent Absences</h2>
-              <AbsenceList />
+              <AbsenceList userId={session.user.id} />
             </div>
           </div>
         </div>

@@ -3,6 +3,11 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 
+interface AbsenceListProps {
+    userId: string;
+}
+
+
 type Absence = {
   id: string;
   date: string;
@@ -10,7 +15,7 @@ type Absence = {
   reason: string | null;
 };
 
-export default function AbsenceList() {
+export default function AbsenceList({userId}: AbsenceListProps) {
   const [absences, setAbsences] = useState<Absence[]>([]);
 
   useEffect(() => {
