@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import AbsenceList from '@/components/dashboard/AbsenceList';
 import AddAbsenceForm from '@/components/dashboard/AddAbsenceForm';
 import SignOutButton from '@/components/dashboard/SignOutButton';
+import AbsenceSummary from '@/components/dashboard/AbsenceSummary';
 
 export default async function Dashboard() {
   const cookieStore = cookies();
@@ -35,6 +36,8 @@ export default async function Dashboard() {
             </div>
           </div>
         </div>
+        
+        <AbsenceSummary />
       </div>
     </div>
   );
