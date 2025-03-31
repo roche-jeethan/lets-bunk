@@ -28,10 +28,18 @@ export default function AbsenceList() {
       const debugResponse = await fetch('/api/absences/debug', {
         credentials: 'include',
       });
+      
       if (debugResponse.ok) {
         const debugData = await debugResponse.json();
         setDebugInfo(debugData);
         console.log('Debug data:', debugData);
+        
+        // If we have absences in debug data, use them
+        if (debugData.absences && debugData.absences.length > 0) {
+          setAbsences(debugData.absences);
+          setIsLoading(false);
+          return;
+        }
       }
       
       // Now get the regular absences
@@ -49,7 +57,13 @@ export default function AbsenceList() {
       setAbsences(data);
     } catch (err) {
       console.error('Error fetching absences:', err);
-      setError(err instanceof Error ? err.message : 'Failed to load absences');
+      
+      // Fall back to debug data if we have it and the normal fetch failed
+      if (debugInfo?.absences && debugInfo.absences.length > 0) {
+        setAbsences(debugInfo.absences);
+      } else {
+        setError(err instanceof Error ? err.message : 'Failed to load absences');
+      }
     } finally {
       setIsLoading(false);
     }

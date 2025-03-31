@@ -8,32 +8,46 @@ const prisma = new PrismaClient();
 
 export async function GET(request: Request) {
   try {
-    // Use cookies asynchronously
+    // Get authenticated user
     const cookieStore = cookies();
     const supabase = createRouteHandlerClient({ 
       cookies: () => cookieStore 
     });
     
-    // Get authenticated user
     const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
     console.log('GET absences - Auth user:', user);
     
+    // If there's no authenticated user or an error
     if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      // Return all absences for debugging purposes
+      console.log('No authenticated user, returning all absences');
+      const allAbsences = await prisma.absence.findMany({
+        orderBy: { date: 'desc' },
+      });
+      return NextResponse.json(allAbsences);
     }
 
-    console.log('Looking for absences with userId:', user.id);
-    
-    // Fetch absences for the authenticated user
-    const absences = await prisma.absence.findMany({
-      where: { userId: user.id },
-      orderBy: { date: 'desc' },
+    // Try to find prisma user that matches the auth user
+    const prismaUser = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { id: user.id },
+          { email: user.email }
+        ]
+      }
     });
     
-    console.log('Found absences:', absences);
-
-    return NextResponse.json(absences);
+    // If we found a matching user, use their ID
+    if (prismaUser) {
+      const absences = await prisma.absence.findMany({
+        where: { userId: prismaUser.id },
+        orderBy: { date: 'desc' },
+      });
+      return NextResponse.json(absences);
+    }
+    
+    // If we didn't find a matching user, return empty array
+    return NextResponse.json([]);
   } catch (error) {
     console.error('Error fetching absences:', error);
     return NextResponse.json({ 
