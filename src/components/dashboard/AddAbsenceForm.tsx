@@ -15,6 +15,9 @@ export default function AddAbsenceForm() {
     setError(null);
 
     try {
+      // Add validation for date format
+      const formattedDate = new Date(date).toISOString();
+
       const response = await fetch('/api/absences', {
         method: 'POST',
         headers: {
@@ -23,26 +26,42 @@ export default function AddAbsenceForm() {
         credentials: 'include',
         body: JSON.stringify({
           subject,
-          date,
-          reason,
+          date: formattedDate, // Send formatted date
+          reason: reason || null, // Ensure null if empty
         }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to create absence');
+        // Log detailed error information
+        console.error('Server response:', {
+          status: response.status,
+          statusText: response.statusText,
+          data,
+        });
+
+        throw new Error(
+          data.error || 
+          data.details?.message || 
+          'Failed to create absence'
+        );
       }
+
+      console.log('Success:', data);
 
       // Reset form
       setSubject('');
       setDate('');
       setReason('');
-      
-      // Trigger a page refresh to update the list
-      window.location.reload();
+
+      // Emit an event instead of reloading
+      const event = new CustomEvent('absenceCreated');
+      window.dispatchEvent(event);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create absence');
-      console.error('Error adding absence:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Failed to create absence';
+      console.error('Error details:', err);
+      setError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

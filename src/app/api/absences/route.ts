@@ -59,7 +59,6 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    // Create new Supabase client for this request with async cookies
     const cookieStore = cookies();
     const supabase = createRouteHandlerClient({ 
       cookies: () => cookieStore 
@@ -77,33 +76,50 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { subject, date, reason } = body;
 
-    // First check if user exists in Prisma DB
-    let prismaUser = await prisma.user.findUnique({
-      where: { id: user.id },
+    // Try to find user by both ID and email
+    let prismaUser = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { id: user.id },
+          { email: user.email || '' }
+        ]
+      }
     });
 
-    // If user doesn't exist in Prisma DB, create the user first
+    // If user doesn't exist in Prisma DB, create them
     if (!prismaUser) {
       console.log('Creating user in Prisma DB');
-      prismaUser = await prisma.user.create({
-        data: {
-          id: user.id,
-          email: user.email || '',
-          name: user.user_metadata?.name || '',
-          password: '', // We don't store the actual password since Supabase handles auth
-        },
-      });
+      try {
+        prismaUser = await prisma.user.create({
+          data: {
+            id: user.id,
+            email: user.email || '',
+            name: user.user_metadata?.name || '',
+            password: '', // We don't store the actual password
+          },
+        });
+      } catch (userError) {
+        console.error('Error creating user:', userError);
+        return NextResponse.json({ 
+          error: 'Failed to create user record',
+          details: userError instanceof Error ? userError.message : String(userError)
+        }, { status: 500 });
+      }
     }
 
-    console.log('Prisma user:', prismaUser);
+    if (!prismaUser) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
 
-    // Create the absence record
+    console.log('Using Prisma user:', prismaUser);
+
+    // Create the absence record using the Prisma user's ID
     const absence = await prisma.absence.create({
       data: {
         subject,
         date: new Date(date),
-        reason,
-        userId: user.id,
+        reason: reason || null,
+        userId: prismaUser.id, // Use the Prisma user's ID instead of Supabase user ID
       },
     });
 
