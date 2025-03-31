@@ -7,27 +7,20 @@ export async function middleware(req: NextRequest) {
   const supabase = createMiddlewareClient({ req, res });
 
   try {
-    const { data: { session }, error } = await supabase.auth.getSession();
+    const { data: { user } } = await supabase.auth.getUser();
+    console.log('Middleware auth check:', { user });
 
-    if (error) throw error;
-
-    if (!session && req.nextUrl.pathname.startsWith('/dashboard')) {
-      const redirectUrl = new URL('/auth/signin', req.url);
-      return NextResponse.redirect(redirectUrl);
-    }
-
-    if (session && req.nextUrl.pathname.startsWith('/auth')) {
-      const redirectUrl = new URL('/dashboard', req.url);
-      return NextResponse.redirect(redirectUrl);
+    if (!user && (req.nextUrl.pathname.startsWith('/api/absences') || req.nextUrl.pathname.startsWith('/dashboard'))) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     return res;
   } catch (error) {
     console.error('Middleware error:', error);
-    return NextResponse.redirect(new URL('/auth/signin', req.url));
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/auth/:path*'],
+  matcher: ['/api/absences/:path*', '/dashboard/:path*'],
 };

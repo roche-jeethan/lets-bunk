@@ -1,43 +1,50 @@
 'use client';
 
 import { useState } from 'react';
-import { supabase } from '@/lib/supabase';
 
-interface AddAbsenceFormProps {
-    userId: string;
-}
-
-export default function AddAbsenceForm({userId}: AddAbsenceFormProps) {
+export default function AddAbsenceForm() {
   const [subject, setSubject] = useState('');
   const [date, setDate] = useState('');
   const [reason, setReason] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Not authenticated');
+    setIsSubmitting(true);
+    setError(null);
 
+    try {
       const response = await fetch('/api/absences', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
         body: JSON.stringify({
           subject,
           date,
           reason,
-          userId: user.id,
         }),
       });
 
-      if (!response.ok) throw new Error('Failed to add absence');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to create absence');
+      }
 
+      // Reset form
       setSubject('');
       setDate('');
       setReason('');
+      
+      // Trigger a page refresh to update the list
       window.location.reload();
-    } catch (error: any) {
-      setError(error.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to create absence');
+      console.error('Error adding absence:', err);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -56,6 +63,7 @@ export default function AddAbsenceForm({userId}: AddAbsenceFormProps) {
           required
         />
       </div>
+      
       <div>
         <label htmlFor="date" className="block text-sm font-medium">
           Date
@@ -69,6 +77,7 @@ export default function AddAbsenceForm({userId}: AddAbsenceFormProps) {
           required
         />
       </div>
+
       <div>
         <label htmlFor="reason" className="block text-sm font-medium">
           Reason (optional)
@@ -81,12 +90,17 @@ export default function AddAbsenceForm({userId}: AddAbsenceFormProps) {
           rows={3}
         />
       </div>
-      {error && <p className="text-red-500 text-sm">{error}</p>}
+
+      {error && (
+        <div className="text-red-600 text-sm">{error}</div>
+      )}
+
       <button
         type="submit"
-        className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
+        disabled={isSubmitting}
+        className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:opacity-50"
       >
-        Add Absence
+        {isSubmitting ? 'Adding...' : 'Add Absence'}
       </button>
     </form>
   );

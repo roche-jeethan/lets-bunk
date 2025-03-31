@@ -1,40 +1,88 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
-
-interface AbsenceListProps {
-    userId: string;
-}
-
 
 type Absence = {
   id: string;
   date: string;
   subject: string;
   reason: string | null;
+  userId: string;
 };
 
-export default function AbsenceList({userId}: AbsenceListProps) {
+export default function AbsenceList() {
   const [absences, setAbsences] = useState<Absence[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [debugInfo, setDebugInfo] = useState<any>(null);
 
   useEffect(() => {
     fetchAbsences();
   }, []);
 
   const fetchAbsences = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-
-    const response = await fetch(`/api/absences?userId=${user.id}`);
-    const data = await response.json();
-    setAbsences(data);
+    try {
+      setIsLoading(true);
+      
+      // First try to load debug info
+      const debugResponse = await fetch('/api/absences/debug', {
+        credentials: 'include',
+      });
+      if (debugResponse.ok) {
+        const debugData = await debugResponse.json();
+        setDebugInfo(debugData);
+        console.log('Debug data:', debugData);
+      }
+      
+      // Now get the regular absences
+      const response = await fetch('/api/absences', {
+        credentials: 'include',
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to fetch absences');
+      }
+      
+      const data = await response.json();
+      console.log('Fetched absences:', data);
+      setAbsences(data);
+    } catch (err) {
+      console.error('Error fetching absences:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load absences');
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  if (isLoading) return <div>Loading absences...</div>;
+  
+  if (error) {
+    return (
+      <div>
+        <p>Error: {error}</p>
+        {debugInfo && (
+          <div className="mt-4 p-2 bg-gray-100 rounded text-xs">
+            <p>Debug Info:</p>
+            <pre>{JSON.stringify(debugInfo, null, 2)}</pre>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
       {absences.length === 0 ? (
-        <p className="text-gray-500">No absences recorded yet.</p>
+        <div>
+          <p className="text-gray-500">No absences recorded yet.</p>
+          {debugInfo && (
+            <div className="mt-4 p-2 bg-gray-100 rounded text-xs">
+              <p>Debug Info:</p>
+              <pre>{JSON.stringify(debugInfo, null, 2)}</pre>
+            </div>
+          )}
+        </div>
       ) : (
         <div className="space-y-2">
           {absences.map((absence) => (
