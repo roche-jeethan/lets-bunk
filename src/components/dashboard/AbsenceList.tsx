@@ -90,12 +90,12 @@ export default function AbsenceList() {
       {absences.length === 0 ? (
         <div>
           <p className="text-gray-500">No absences recorded yet.</p>
-          {debugInfo && (
+          {/* {debugInfo && (
             <div className="mt-4 p-2 bg-gray-100 rounded text-xs">
               <p>Debug Info:</p>
               <pre>{JSON.stringify(debugInfo, null, 2)}</pre>
             </div>
-          )}
+          )} */}
         </div>
       ) : (
         <div className="space-y-2">
