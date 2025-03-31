@@ -99,18 +99,20 @@ export default function AbsenceList() {
         </div>
       ) : (
         <div className="space-y-2">
-          {absences.map((absence) => (
+          {absences
+            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+            .map((absence) => (
             <div key={absence.id} className="border p-4 rounded-lg">
               <div className="flex justify-between items-start">
-                <div>
-                  <p className="font-semibold">{absence.subject}</p>
-                  <p className="text-sm text-gray-600">
-                    {new Date(absence.date).toLocaleDateString()}
-                  </p>
-                </div>
-                {absence.reason && (
-                  <p className="text-sm text-gray-600">{absence.reason}</p>
-                )}
+          <div>
+            <p className="font-semibold">{absence.subject}</p>
+            <p className="text-sm text-gray-600">
+              {new Date(absence.date).toLocaleDateString()}
+            </p>
+          </div>
+          {absence.reason && (
+            <p className="text-sm text-gray-600">{absence.reason}</p>
+          )}
               </div>
             </div>
           ))}
