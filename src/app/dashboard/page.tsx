@@ -5,6 +5,7 @@ import AbsenceList from '@/components/dashboard/AbsenceList';
 import AddAbsenceForm from '@/components/dashboard/AddAbsenceForm';
 import SignOutButton from '@/components/dashboard/SignOutButton';
 import AbsenceSummary from '@/components/dashboard/AbsenceSummary';
+import ProfileButton from '@/components/dashboard/ProfileButton';
 
 export default async function Dashboard() {
   const cookieStore = cookies();
@@ -22,7 +23,10 @@ export default async function Dashboard() {
         <div className="bg-white p-6 rounded-lg shadow">
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-2xl font-bold">Attendance Dashboard</h1>
-            <SignOutButton />
+            <div className="flex items-center gap-4">
+              <ProfileButton />
+              <SignOutButton />
+            </div>
           </div>
           
           <div className="grid md:grid-cols-2 gap-6">
