@@ -1,44 +1,78 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
+'use client';
+
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { PrismaClient } from '@prisma/client';
+import { useRouter } from 'next/navigation';
 
-const prisma = new PrismaClient();
+type Statistics = {
+  totalAbsences: number;
+  mostMissedSubject: {
+    subject: string;
+    count: number;
+  } | null;
+  lastAbsence: any;
+  absenceHistory: any[];
+  subjectCounts: Record<string, number>;
+};
 
-export default async function Statistics() {
-  const cookieStore = cookies();
-  const supabase = createServerComponentClient({ cookies: () => cookieStore });
-  
-  const { data: { user }, error } = await supabase.auth.getUser();
+export default function Statistics() {
+  const [statistics, setStatistics] = useState<Statistics | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
-  if (error || !user) {
-    redirect('/auth/signin');
+  useEffect(() => {
+    fetchStatistics();
+  }, []);
+
+  const fetchStatistics = async () => {
+    try {
+      console.log('Fetching statistics data...');
+      const response = await fetch('/api/statistics');
+
+      if (!response.ok) {
+        console.error('Error response:', response.status, response.statusText);
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Error data:', errorData);
+
+        if (response.status === 401) {
+          router.push('/auth/signin');
+          return;
+        }
+        throw new Error(errorData.error || 'Failed to fetch statistics');
+      }
+
+      const data = await response.json();
+      console.log('Received statistics data:', data);
+      setStatistics(data);
+    } catch (err) {
+      console.error('Error in fetchStatistics:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load statistics');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-4 flex items-center justify-center">
+        <p className="text-gray-600">Loading statistics...</p>
+      </div>
+    );
   }
 
-  // Fetch all absences for the user
-  const absences = await prisma.absence.findMany({
-    where: { userId: user.id },
-    orderBy: { date: 'desc' },
-    include: {
-      user: {
-        select: {
-          name: true,
-          email: true,
-        },
-      },
-    },
-  });
-
-  // Calculate statistics
-  const totalAbsences = absences.length;
-  const subjectCounts = absences.reduce((acc: { [key: string]: number }, curr) => {
-    acc[curr.subject] = (acc[curr.subject] || 0) + 1;
-    return acc;
-  }, {});
-
-  const mostMissedSubject = Object.entries(subjectCounts)
-    .sort(([,a], [,b]) => b - a)[0];
+  if (error || !statistics) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-4 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">{error || 'Failed to load statistics'}</p>
+          <Link href="/dashboard" className="text-blue-600 hover:text-blue-800">
+            Return to Dashboard
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
@@ -61,28 +95,49 @@ export default async function Statistics() {
           <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-gray-50 p-4 rounded-lg">
               <p className="text-sm text-gray-500">Total Absences</p>
-              <p className="text-3xl font-bold text-blue-600">{totalAbsences}</p>
+              <p className="text-3xl font-bold text-blue-600">{statistics.totalAbsences}</p>
             </div>
             <div className="bg-gray-50 p-4 rounded-lg">
               <p className="text-sm text-gray-500">Most Missed Subject</p>
-              <p className="text-3xl font-bold text-blue-600">{mostMissedSubject?.[0] || 'N/A'}</p>
-              <p className="text-sm text-gray-500 mt-1">
-                {mostMissedSubject ? `${mostMissedSubject[1]} times` : ''}
+              <p className="text-3xl font-bold text-blue-600">
+                {statistics.mostMissedSubject?.subject || 'N/A'}
               </p>
+              {statistics.mostMissedSubject && (
+                <p className="text-sm text-gray-500 mt-1">
+                  {statistics.mostMissedSubject.count} times
+                </p>
+              )}
             </div>
             <div className="bg-gray-50 p-4 rounded-lg">
               <p className="text-sm text-gray-500">Last Absence</p>
               <p className="text-3xl font-bold text-blue-600">
-                {absences[0] ? new Date(absences[0].date).toLocaleDateString() : 'N/A'}
+                {statistics.lastAbsence ? 
+                  new Date(statistics.lastAbsence.date).toLocaleDateString() : 
+                  'N/A'
+                }
               </p>
             </div>
           </div>
 
-          {/* Detailed List */}
+          {/* Subject-wise Breakdown */}
+          <div className="px-6 py-4 border-t border-gray-200">
+            <h2 className="text-lg font-semibold mb-4">Subject-wise Breakdown</h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {Object.entries(statistics.subjectCounts).map(([subject, count]) => (
+                <div key={subject} className="bg-gray-50 p-4 rounded-lg">
+                  <p className="font-medium">{subject}</p>
+                  <p className="text-2xl font-bold text-blue-600">{count}</p>
+                  <p className="text-sm text-gray-500">absences</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Detailed History */}
           <div className="px-6 py-4 border-t border-gray-200">
             <h2 className="text-lg font-semibold mb-4">Absence History</h2>
             <div className="space-y-4">
-              {absences.map((absence) => (
+              {statistics.absenceHistory.map((absence) => (
                 <div 
                   key={absence.id} 
                   className="flex justify-between items-center p-4 bg-gray-50 rounded-lg"
