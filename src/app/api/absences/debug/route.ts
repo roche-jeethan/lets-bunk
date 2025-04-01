@@ -1,15 +1,13 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import prisma from '@/lib/prisma';
 
 export async function GET() {
   try {
-    // Check all users
+    console.log('Running debug checks...');
+    
     const users = await prisma.user.findMany();
     console.log('All users:', users);
     
-    // Check all absences
     const allAbsences = await prisma.absence.findMany();
     console.log('All absences:', allAbsences);
     
@@ -19,9 +17,6 @@ export async function GET() {
     });
   } catch (error) {
     console.error('Debug error:', error);
-    return NextResponse.json({ 
-      error: 'Error querying database',
-      details: error instanceof Error ? error.message : String(error)
-    }, { status: 500 });
+    return NextResponse.json({ error: 'Database query failed' }, { status: 500 });
   }
 }
