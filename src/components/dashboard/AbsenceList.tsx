@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import DeleteAbsenceButton from './DeleteAbsenceButton';
 
 type Absence = {
   id: string;
@@ -69,6 +70,10 @@ export default function AbsenceList() {
     }
   };
 
+  const handleDelete = () => {
+    fetchAbsences(); // Refresh the list after deletion
+  };
+
   if (isLoading) return <div>Loading absences...</div>;
   
   if (error) {
@@ -90,12 +95,6 @@ export default function AbsenceList() {
       {absences.length === 0 ? (
         <div>
           <p className="text-gray-500">No absences recorded yet.</p>
-          {/* {debugInfo && (
-            <div className="mt-4 p-2 bg-gray-100 rounded text-xs">
-              <p>Debug Info:</p>
-              <pre>{JSON.stringify(debugInfo, null, 2)}</pre>
-            </div>
-          )} */}
         </div>
       ) : (
         <div className="space-y-2">
@@ -104,15 +103,19 @@ export default function AbsenceList() {
             .map((absence) => (
             <div key={absence.id} className="border p-4 rounded-lg">
               <div className="flex justify-between items-start">
-          <div>
-            <p className="font-semibold">{absence.subject}</p>
-            <p className="text-sm text-gray-600">
-              {new Date(absence.date).toLocaleDateString()}
-            </p>
-          </div>
-          {absence.reason && (
-            <p className="text-sm text-gray-600">{absence.reason}</p>
-          )}
+                <div>
+                  <p className="font-semibold">{absence.subject}</p>
+                  <p className="text-sm text-gray-600">
+                    {new Date(absence.date).toLocaleDateString()}
+                  </p>
+                  {absence.reason && (
+                    <p className="text-sm text-gray-600 mt-1">{absence.reason}</p>
+                  )}
+                </div>
+                <DeleteAbsenceButton 
+                  absenceId={absence.id} 
+                  onDelete={handleDelete}
+                />
               </div>
             </div>
           ))}
