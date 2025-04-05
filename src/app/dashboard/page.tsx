@@ -9,14 +9,14 @@ import ProfileButton from '@/components/dashboard/ProfileButton';
 import StatsButton from '@/components/dashboard/StatsButton';
 
 export default async function Dashboard() {
-  const cookieStore = cookies();
-  const supabase = createServerComponentClient({ cookies: () => cookieStore });
+  // const cookieStore = cookies();
+  // const supabase = createServerComponentClient({ cookies: () => cookieStore });
   
-  const { data: { user }, error } = await supabase.auth.getUser();
+  // const { data: { user }, error } = await supabase.auth.getUser();
 
-  if (error || !user) {
-    redirect('/auth/signin');
-  }
+  // if (error || !user) {
+  //   redirect('/auth/signin');
+  // }
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">

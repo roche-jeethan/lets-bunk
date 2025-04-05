@@ -1,18 +1,12 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 
-type Props = {
-  params: {
-    id: string;
-  };
-};
-
 export async function DELETE(
   request: Request,
-  { params }: Props
+  context: { params: { id: string } }
 ) {
   try {
-    const id = params.id;
+    const id = context.params.id;
     console.log('Deleting absence:', id);
 
     const deletedAbsence = await prisma.absence.delete({
