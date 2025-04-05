@@ -3,11 +3,22 @@ import prisma from '@/lib/prisma';
 
 export async function DELETE(
   request: Request,
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = context.params.id;
+    // Access params asynchronously by awaiting the promise
+    const params = await context.params;
+    const id = params.id;
+    
     console.log('Deleting absence:', id);
+
+    // Make sure id is a string before using it
+    if (!id || typeof id !== 'string') {
+      return NextResponse.json(
+        { error: 'Invalid absence ID' },
+        { status: 400 }
+      );
+    }
 
     const deletedAbsence = await prisma.absence.delete({
       where: { id },
