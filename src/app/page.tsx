@@ -1,17 +1,6 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
 import Link from 'next/link';
 
-export default async function Home() {
-  const cookieStore = cookies();
-  const supabase = createServerComponentClient({ cookies: () => cookieStore });
-  const { data: { session } } = await supabase.auth.getSession();
-
-  if (session) {
-    redirect('/dashboard');
-  }
-
+export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-gray-50 to-white">
       <div className="w-full max-w-4xl px-4 text-center space-y-8">
