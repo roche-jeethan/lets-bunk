@@ -1,22 +1,23 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
-import AbsenceList from '@/components/dashboard/AbsenceList';
-import AddAbsenceForm from '@/components/dashboard/AddAbsenceForm';
-import SignOutButton from '@/components/dashboard/SignOutButton';
-import AbsenceSummary from '@/components/dashboard/AbsenceSummary';
-import ProfileButton from '@/components/dashboard/ProfileButton';
-import StatsButton from '@/components/dashboard/StatsButton';
+import { redirect } from "next/navigation";
+import { createServerSupabaseClient } from "@/lib/supabase-server";
+import AbsenceList from "@/components/dashboard/AbsenceList";
+import AddAbsenceForm from "@/components/dashboard/AddAbsenceForm";
+import SignOutButton from "@/components/dashboard/SignOutButton";
+import AbsenceSummary from "@/components/dashboard/AbsenceSummary";
+import ProfileButton from "@/components/dashboard/ProfileButton";
+import StatsButton from "@/components/dashboard/StatsButton";
 
 export default async function Dashboard() {
-  // const cookieStore = cookies();
-  // const supabase = createServerComponentClient({ cookies: () => cookieStore });
-  
-  // const { data: { user }, error } = await supabase.auth.getUser();
+  const supabase = await createServerSupabaseClient();
 
-  // if (error || !user) {
-  //   redirect('/auth/signin');
-  // }
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (error || !user) {
+    redirect("/auth/signin");
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
@@ -30,7 +31,7 @@ export default async function Dashboard() {
               <SignOutButton />
             </div>
           </div>
-          
+
           <div className="grid md:grid-cols-2 gap-6">
             <div>
               <h2 className="text-xl font-semibold mb-4">Add New Absence</h2>
@@ -42,7 +43,7 @@ export default async function Dashboard() {
             </div>
           </div>
         </div>
-        
+
         <AbsenceSummary />
       </div>
     </div>

@@ -1,65 +1,62 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { TrashIcon } from '@heroicons/react/24/outline';
+import { useState } from "react";
+import Button from "../ui/Button";
 
-type DeleteAbsenceButtonProps = {
+interface DeleteAbsenceButtonProps {
   absenceId: string;
   onDelete: () => void;
-};
+}
 
-export default function DeleteAbsenceButton({ absenceId, onDelete }: DeleteAbsenceButtonProps) {
+export default function DeleteAbsenceButton({
+  absenceId,
+  onDelete,
+}: DeleteAbsenceButtonProps) {
   const [isDeleting, setIsDeleting] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleDelete = async () => {
+    if (!confirm("Are you sure you want to delete this absence?")) {
+      return;
+    }
+
+    setIsDeleting(true);
+    setError(null);
+
     try {
-      setIsDeleting(true);
       const response = await fetch(`/api/absences/${absenceId}`, {
-        method: 'DELETE',
-        credentials: 'include',
+        method: "DELETE",
+        credentials: "include",
       });
 
       if (!response.ok) {
-        throw new Error('Failed to delete absence');
+        const errorData = await response
+          .json()
+          .catch(() => ({ error: "Failed to delete" }));
+        throw new Error(errorData.error || "Failed to delete absence");
       }
 
-      onDelete();
-    } catch (error) {
-      console.error('Error deleting absence:', error);
+      onDelete(); // Refresh the list
+    } catch (err) {
+      console.error("Error deleting absence:", err);
+      setError(err instanceof Error ? err.message : "Failed to delete");
     } finally {
       setIsDeleting(false);
-      setShowConfirm(false);
     }
   };
 
-  if (showConfirm) {
-    return (
-      <div className="flex items-center gap-2">
-        <button
-          onClick={handleDelete}
-          disabled={isDeleting}
-          className="text-red-600 text-sm font-medium hover:text-red-800 disabled:opacity-50"
-        >
-          {isDeleting ? 'Deleting...' : 'Confirm'}
-        </button>
-        <button
-          onClick={() => setShowConfirm(false)}
-          className="text-gray-500 text-sm font-medium hover:text-gray-700"
-        >
-          Cancel
-        </button>
-      </div>
-    );
-  }
-
   return (
-    <button
-      onClick={() => setShowConfirm(true)}
-      className="text-gray-500 hover:text-red-600 transition-colors"
-      title="Delete absence"
-    >
-      <TrashIcon className="h-5 w-5" />
-    </button>
+    <div className="flex flex-col items-end">
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={handleDelete}
+        disabled={isDeleting}
+        className="text-red-600 hover:text-red-800 hover:bg-red-50"
+      >
+        {isDeleting ? "Deleting..." : "Delete"}
+      </Button>
+      {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
+    </div>
   );
 }

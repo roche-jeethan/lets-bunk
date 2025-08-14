@@ -1,27 +1,44 @@
-import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { createServerSupabaseClient } from "@/lib/supabase-server";
+import { NextRequest, NextResponse } from "next/server";
 
-const prisma = new PrismaClient();
-
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    // Check all users
-    const users = await prisma.user.findMany();
-    console.log('All users:', users);
-    
-    // Check all absences
-    const allAbsences = await prisma.absence.findMany();
-    console.log('All absences:', allAbsences);
-    
-    return NextResponse.json({ 
-      users, 
-      absences: allAbsences 
+    const supabase = await createServerSupabaseClient();
+
+    // Test auth
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    console.log("Auth test:", { user: user?.id, authError });
+
+    // Test database connection
+    const { data: tables, error: tablesError } = await supabase
+      .from("information_schema.tables")
+      .select("table_name")
+      .eq("table_schema", "public");
+
+    console.log("Tables test:", { tables, tablesError });
+
+    // Test users table
+    const { data: users, error: usersError } = await supabase
+      .from("users")
+      .select("*")
+      .limit(5);
+
+    console.log("Users test:", { users, usersError });
+
+    return NextResponse.json({
+      auth: { user: user?.id, error: authError?.message },
+      tables: { data: tables, error: tablesError?.message },
+      users: { data: users, error: usersError?.message },
     });
   } catch (error) {
-    console.error('Debug error:', error);
-    return NextResponse.json({ 
-      error: 'Error querying database',
-      details: error instanceof Error ? error.message : String(error)
-    }, { status: 500 });
+    console.error("Debug API error:", error);
+    return NextResponse.json(
+      { error: "Debug failed", details: error },
+      { status: 500 }
+    );
   }
 }

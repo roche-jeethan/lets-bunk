@@ -1,50 +1,80 @@
-import { NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
+import { createServerSupabaseClient } from "@/lib/supabase-server";
+import { NextRequest, NextResponse } from "next/server";
+import { PrismaClient } from "@prisma/client";
 
-export async function GET() {
+const prisma = new PrismaClient();
+
+export async function GET(request: NextRequest) {
   try {
-    console.log('Fetching absences...');
+    const supabase = await createServerSupabaseClient();
+
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const absences = await prisma.absence.findMany({
-      orderBy: { date: 'desc' },
-      include: {
-        user: {
-          select: {
-            name: true,
-            email: true,
-          },
-        },
-      },
+      where: { userId: user.id },
+      orderBy: { date: "desc" },
+      take: 20,
     });
-    
-    console.log(`Found ${absences.length} absences`);
-    return NextResponse.json(absences);
+
+    return NextResponse.json({ absences });
   } catch (error) {
-    console.error('Error fetching absences:', error);
-    return NextResponse.json({ error: 'Failed to fetch absences' }, { status: 500 });
+    console.error("Error fetching absences:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  } finally {
+    await prisma.$disconnect();
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
+    const supabase = await createServerSupabaseClient();
+
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const body = await request.json();
-    console.log('Creating absence:', body);
-    
     const { subject, date, reason } = body;
+
+    if (!subject || !date) {
+      return NextResponse.json(
+        { error: "Subject and date are required" },
+        { status: 400 }
+      );
+    }
 
     const absence = await prisma.absence.create({
       data: {
         subject,
         date: new Date(date),
         reason: reason || null,
-        // For now, use the first user
-        userId: (await prisma.user.findFirst())?.id || '',
+        userId: user.id,
       },
     });
 
-    console.log('Created absence:', absence);
-    return NextResponse.json(absence, { status: 201 });
+    return NextResponse.json({ absence }, { status: 201 });
   } catch (error) {
-    console.error('Error creating absence:', error);
-    return NextResponse.json({ error: 'Failed to create absence' }, { status: 500 });
+    console.error("Error creating absence:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  } finally {
+    await prisma.$disconnect();
   }
 }

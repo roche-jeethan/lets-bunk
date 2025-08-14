@@ -1,58 +1,76 @@
-import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { createServerSupabaseClient } from "@/lib/supabase-server";
+import { NextRequest, NextResponse } from "next/server";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    console.log('Fetching profile data...');
+    const supabase = await createServerSupabaseClient();
 
-    // For now, get the first user (we'll implement proper auth later)
-    const user = await prisma.user.findFirst({
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Get user profile from database using Prisma
+    const profile = await prisma.user.findUnique({
+      where: { id: user.id },
       include: {
-        absences: true,
+        absences: {
+          select: {
+            subject: true,
+          },
+        },
       },
     });
 
-    if (!user) {
-      console.log('No user found');
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    if (!profile) {
+      console.error("Profile not found for user:", user.id);
+      return NextResponse.json({ error: "Profile not found" }, { status: 404 });
     }
 
-    console.log('Found user:', user.email);
+    const totalAbsences = profile.absences.length;
 
-    // Calculate statistics
-    const totalAbsences = user.absences.length;
-    
-    // Count absences by subject
-    const subjectCounts = user.absences.reduce((acc: { [key: string]: number }, curr) => {
-      acc[curr.subject] = (acc[curr.subject] || 0) + 1;
-      return acc;
-    }, {});
+    // Calculate most missed subject
+    let mostMissedSubject = null;
+    if (profile.absences.length > 0) {
+      const subjectCounts = profile.absences.reduce(
+        (acc: Record<string, number>, absence) => {
+          acc[absence.subject] = (acc[absence.subject] || 0) + 1;
+          return acc;
+        },
+        {}
+      );
 
-    // Find most missed subject
-    const mostMissedSubject = Object.entries(subjectCounts)
-      .sort(([,a], [,b]) => b - a)[0];
+      const mostMissed = Object.entries(subjectCounts).reduce((a, b) =>
+        subjectCounts[a[0]] > subjectCounts[b[0]] ? a : b
+      );
 
-    const profile = {
-      email: user.email,
-      name: user.name,
-      created_at: user.createdAt,
+      mostMissedSubject = {
+        subject: mostMissed[0],
+        count: mostMissed[1],
+      };
+    }
+
+    return NextResponse.json({
+      email: profile.email,
+      name: profile.name,
+      created_at: profile.createdAt.toISOString(),
       totalAbsences,
-      mostMissedSubject: mostMissedSubject ? {
-        subject: mostMissedSubject[0],
-        count: mostMissedSubject[1]
-      } : null
-    };
-
-    console.log('Computed profile data:', profile);
-
-    return NextResponse.json(profile);
+      mostMissedSubject,
+    });
   } catch (error) {
-    console.error('Error fetching profile:', error);
-    return NextResponse.json({ 
-      error: 'Internal server error',
-      details: error instanceof Error ? error.message : String(error)
-    }, { status: 500 });
+    console.error("Unexpected error in profile API:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  } finally {
+    await prisma.$disconnect();
   }
 }
