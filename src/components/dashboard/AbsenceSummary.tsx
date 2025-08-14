@@ -23,7 +23,6 @@ export default function AbsenceSummary() {
 
   useEffect(() => {
     fetchAbsenceCounts();
-    // Listen for new absences
     window.addEventListener("absenceCreated", fetchAbsenceCounts);
     return () =>
       window.removeEventListener("absenceCreated", fetchAbsenceCounts);
@@ -55,10 +54,7 @@ export default function AbsenceSummary() {
       const data = await response.json();
       console.log("Raw API response for summary:", data);
 
-      // Handle the API response structure - your API returns { absences: [...] }
       const absencesData = data.absences || data || [];
-
-      // Ensure we have an array
       if (!Array.isArray(absencesData)) {
         console.error(
           "Expected array but got:",
@@ -69,8 +65,6 @@ export default function AbsenceSummary() {
       }
 
       console.log("Processing absences for summary:", absencesData);
-
-      // Count absences by subject
       const counts = absencesData.reduce(
         (acc: Record<string, number>, absence: Absence) => {
           acc[absence.subject] = (acc[absence.subject] || 0) + 1;
@@ -78,8 +72,6 @@ export default function AbsenceSummary() {
         },
         {}
       );
-
-      // Convert to array and sort by count
       const sortedCounts = Object.entries(counts)
         .map(([subject, count]) => ({ subject, count: count as number }))
         .sort((a, b) => b.count - a.count);
@@ -89,7 +81,6 @@ export default function AbsenceSummary() {
     } catch (err) {
       console.error("Error fetching absence summary:", err);
       setError(err instanceof Error ? err.message : "Failed to load summary");
-      // Set empty arrays as fallback
       setSubjectCounts([]);
       setTotalAbsences(0);
     } finally {
@@ -99,68 +90,78 @@ export default function AbsenceSummary() {
 
   if (isLoading) {
     return (
-      <div className="bg-white p-6 rounded-lg shadow">
-        <div className="flex items-center justify-center">
-          <div className="text-gray-600">Loading summary...</div>
-        </div>
+      <div className="flex items-center justify-center p-8">
+        <div className="text-emerald-600">Loading summary...</div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-white p-6 rounded-lg shadow">
-        <div className="p-4 bg-red-50 border border-red-200 rounded-md">
-          <p className="text-red-600 font-medium">Error loading summary</p>
-          <p className="text-red-500 text-sm mt-1">{error}</p>
-          <button
-            onClick={fetchAbsenceCounts}
-            className="mt-2 px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700"
-          >
-            Try Again
-          </button>
-        </div>
+      <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+        <p className="text-red-600 font-medium">Error loading summary</p>
+        <p className="text-red-500 text-sm mt-1">{error}</p>
+        <button
+          onClick={fetchAbsenceCounts}
+          className="mt-2 px-3 py-1 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition-colors"
+        >
+          Try Again
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow">
-      <h2 className="text-xl font-semibold mb-4">Absence Summary</h2>
+    <div>
+      <h2 className="text-2xl font-semibold text-emerald-800 mb-6">
+        Absence Summary
+      </h2>
 
       {totalAbsences === 0 ? (
-        <div className="text-center py-8">
-          <p className="text-gray-500">No absences to summarize yet.</p>
-          <p className="text-gray-400 text-sm mt-1">
+        <div className="text-center py-12">
+          <p className="text-emerald-600 text-lg">
+            No absences to summarize yet.
+          </p>
+          <p className="text-emerald-500 text-sm mt-2">
             Start adding absences to see your summary here.
           </p>
         </div>
       ) : (
-        <>
-          <div className="mb-6 p-4 bg-blue-50 rounded-lg">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-blue-600">
-                {totalAbsences}
+        <div className="space-y-8">
+          <div className="flex justify-center">
+            <div className="p-6 bg-emerald-100 rounded-xl border border-emerald-200 w-full max-w-xs">
+              <div className="text-center">
+                <div className="text-4xl font-bold text-emerald-700">
+                  {totalAbsences}
+                </div>
+                <div className="text-emerald-600 font-medium mt-1">
+                  Total Absences
+                </div>
               </div>
-              <div className="text-sm text-gray-600">Total Absences</div>
             </div>
           </div>
 
-          <h3 className="text-lg font-medium mb-3">By Subject</h3>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            {subjectCounts.map(({ subject, count }) => (
-              <div
-                key={subject}
-                className="bg-gray-50 p-4 rounded-lg text-center hover:bg-gray-100 transition-colors"
-              >
-                <div className="text-2xl font-bold text-blue-600">{count}</div>
-                <div className="text-sm text-gray-600 break-words">
-                  {subject}
+          <div>
+            <h3 className="text-lg font-semibold text-emerald-800 mb-4">
+              By Subject
+            </h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+              {subjectCounts.map(({ subject, count }) => (
+                <div
+                  key={subject}
+                  className="bg-emerald-50 border border-emerald-200 p-4 rounded-lg text-center hover:bg-emerald-100 transition-colors"
+                >
+                  <div className="text-2xl font-bold text-emerald-700">
+                    {count}
+                  </div>
+                  <div className="text-sm text-emerald-600 break-words mt-1">
+                    {subject}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </>
+        </div>
       )}
     </div>
   );

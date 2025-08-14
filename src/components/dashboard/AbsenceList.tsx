@@ -77,20 +77,20 @@ export default function AbsenceList() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center p-4">
-        <div className="text-gray-600">Loading absences...</div>
+      <div className="flex items-center justify-center p-8">
+        <div className="text-emerald-600">Loading absences...</div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="p-4 bg-red-50 border border-red-200 rounded-md">
+      <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
         <p className="text-red-600 font-medium">Error loading absences</p>
         <p className="text-red-500 text-sm mt-1">{error}</p>
         <button
           onClick={fetchAbsences}
-          className="mt-2 px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700"
+          className="mt-2 px-3 py-1 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition-colors"
         >
           Try Again
         </button>
@@ -102,29 +102,29 @@ export default function AbsenceList() {
     <div className="space-y-4">
       {absences.length === 0 ? (
         <div className="text-center py-8">
-          <p className="text-gray-500">No absences recorded yet.</p>
-          <p className="text-gray-400 text-sm mt-1">
-            Add your first absence using the form on the left.
+          <p className="text-emerald-600">No absences recorded yet.</p>
+          <p className="text-emerald-500 text-sm mt-1">
+            Add your first absence using the form.
           </p>
         </div>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-3">
           {absences
-            .slice() // Create a copy to avoid mutating the original array
+            .slice()
             .sort(
               (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
             )
             .map((absence) => (
               <div
                 key={absence.id}
-                className="border p-4 rounded-lg hover:shadow-md transition-shadow"
+                className="border border-emerald-200 p-4 rounded-lg hover:shadow-md hover:border-emerald-300 transition-all duration-200 bg-emerald-50"
               >
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
-                    <p className="font-semibold text-gray-900">
+                    <p className="font-semibold text-emerald-900">
                       {absence.subject}
                     </p>
-                    <p className="text-sm text-gray-600 mt-1">
+                    <p className="text-sm text-emerald-700 mt-1">
                       {new Date(absence.date).toLocaleDateString("en-US", {
                         weekday: "long",
                         year: "numeric",
@@ -133,7 +133,7 @@ export default function AbsenceList() {
                       })}
                     </p>
                     {absence.reason && (
-                      <p className="text-sm text-gray-600 mt-2 italic">
+                      <p className="text-sm text-emerald-600 mt-2 italic">
                         Reason: {absence.reason}
                       </p>
                     )}
