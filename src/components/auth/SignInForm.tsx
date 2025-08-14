@@ -44,47 +44,82 @@ export default function SignInForm() {
   };
 
   return (
-    <form onSubmit={handleSignIn} className="space-y-4 max-w-md mx-auto">
-      <div>
-        <label htmlFor="email" className="block text-sm font-medium mb-1">
-          Email
-        </label>
-        <Input
-          id="email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
+    <div className="bg-white rounded-2xl shadow-xl border border-emerald-200 p-8 max-w-md mx-auto">
+      <form onSubmit={handleSignIn} className="space-y-6">
+        <div className="space-y-4">
+          <div>
+            <label
+              htmlFor="email"
+              className="block text-sm font-semibold mb-2 text-emerald-800"
+            >
+              Email Address
+            </label>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              disabled={loading}
+              className="w-full px-4 py-3 border-2 border-emerald-300 rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              placeholder="Enter your email"
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="password"
+              className="block text-sm font-semibold mb-2 text-emerald-800"
+            >
+              Password
+            </label>
+            <Input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              disabled={loading}
+              className="w-full px-4 py-3 border-2 border-emerald-300 rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              placeholder="Enter your password"
+            />
+          </div>
+        </div>
+
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+            <p className="text-red-600 text-sm font-medium">{error}</p>
+          </div>
+        )}
+
+        <Button
+          type="submit"
           disabled={loading}
-        />
-      </div>
+          className="w-full py-3 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm"
+        >
+          {loading ? "Signing in..." : "Sign In"}
+        </Button>
 
-      <div>
-        <label htmlFor="password" className="block text-sm font-medium mb-1">
-          Password
-        </label>
-        <Input
-          id="password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          disabled={loading}
-        />
-      </div>
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-emerald-200"></div>
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-4 bg-white text-emerald-600 font-medium">
+              Don't have an account?
+            </span>
+          </div>
+        </div>
 
-      {error && <div className="text-red-600 text-sm">{error}</div>}
-
-      <Button type="submit" disabled={loading} className="w-full">
-        {loading ? "Signing in..." : "Sign In"}
-      </Button>
-
-      <p className="text-center text-sm text-gray-600">
-        Don't have an account?{" "}
-        <Link href="/auth/signup" className="text-blue-600 hover:text-blue-800">
-          Sign up
-        </Link>
-      </p>
-    </form>
+        <div className="text-center">
+          <Link
+            href="/auth/signup"
+            className="inline-flex items-center px-4 py-2 text-emerald-600 hover:text-emerald-800 font-medium rounded-lg hover:bg-emerald-50 transition-all duration-200"
+          >
+            Create a new account
+          </Link>
+        </div>
+      </form>
+    </div>
   );
 }

@@ -52,8 +52,6 @@ export default function SignUpForm() {
 
       if (data.user) {
         console.log("Creating user profile via API...");
-
-        // Create user profile in database via API (which uses Prisma)
         const response = await fetch("/api/user", {
           method: "POST",
           headers: {
@@ -86,18 +84,33 @@ export default function SignUpForm() {
 
   if (isSignedUp) {
     return (
-      <div className="space-y-4 max-w-md mx-auto text-center">
-        <div className="bg-green-50 border border-green-200 rounded-md p-4">
-          <h3 className="text-lg font-medium text-green-800 mb-2">
+      <div className="bg-white rounded-2xl shadow-xl border border-emerald-200 p-8 max-w-md mx-auto">
+        <div className="text-center space-y-4">
+          <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto">
+            <svg
+              className="w-8 h-8 text-emerald-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          </div>
+          <h3 className="text-xl font-semibold text-emerald-800">
             Account Created Successfully!
           </h3>
-          <p className="text-green-700 mb-4">
+          <p className="text-emerald-700">
             Your account has been created. You can now sign in with your
             credentials.
           </p>
           <Link
             href="/auth/signin"
-            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            className="inline-flex items-center px-6 py-3 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 transition-colors shadow-sm"
           >
             Go to Sign In
           </Link>
@@ -107,66 +120,103 @@ export default function SignUpForm() {
   }
 
   return (
-    <form onSubmit={handleSignUp} className="space-y-4 max-w-md mx-auto">
-      <div>
-        <label htmlFor="email" className="block text-sm font-medium mb-1">
-          Email
-        </label>
-        <Input
-          id="email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          disabled={loading}
-        />
-      </div>
+    <div className="bg-white rounded-2xl shadow-xl border border-emerald-200 p-8 max-w-md mx-auto">
+      <form onSubmit={handleSignUp} className="space-y-6">
+        <div className="space-y-4">
+          <div>
+            <label
+              htmlFor="email"
+              className="block text-sm font-semibold mb-2 text-emerald-800"
+            >
+              Email Address
+            </label>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              disabled={loading}
+              className="w-full px-4 py-3 border-2 border-emerald-300 rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              placeholder="Enter your email"
+            />
+          </div>
 
-      <div>
-        <label htmlFor="password" className="block text-sm font-medium mb-1">
-          Password
-        </label>
-        <Input
-          id="password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          disabled={loading}
-          minLength={6}
-        />
-      </div>
+          <div>
+            <label
+              htmlFor="password"
+              className="block text-sm font-semibold mb-2 text-emerald-800"
+            >
+              Password
+            </label>
+            <Input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              disabled={loading}
+              minLength={6}
+              className="w-full px-4 py-3 border-2 border-emerald-300 rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              placeholder="Create a password"
+            />
+          </div>
 
-      <div>
-        <label
-          htmlFor="confirmPassword"
-          className="block text-sm font-medium mb-1"
+          <div>
+            <label
+              htmlFor="confirmPassword"
+              className="block text-sm font-semibold mb-2 text-emerald-800"
+            >
+              Confirm Password
+            </label>
+            <Input
+              id="confirmPassword"
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              disabled={loading}
+              minLength={6}
+              className="w-full px-4 py-3 border-2 border-emerald-300 rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              placeholder="Confirm your password"
+            />
+          </div>
+        </div>
+
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+            <p className="text-red-600 text-sm font-medium">{error}</p>
+          </div>
+        )}
+
+        <Button
+          type="submit"
+          disabled={loading}
+          className="w-full py-3 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm"
         >
-          Confirm Password
-        </label>
-        <Input
-          id="confirmPassword"
-          type="password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          required
-          disabled={loading}
-          minLength={6}
-        />
-      </div>
+          {loading ? "Creating account..." : "Create Account"}
+        </Button>
 
-      {error && <div className="text-red-600 text-sm">{error}</div>}
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-emerald-200"></div>
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-4 bg-white text-emerald-600 font-medium">
+              Already have an account?
+            </span>
+          </div>
+        </div>
 
-      <Button type="submit" disabled={loading} className="w-full">
-        {loading ? "Creating account..." : "Sign Up"}
-      </Button>
-
-      <p className="text-center text-sm text-gray-600">
-        Already have an account?{" "}
-        <Link href="/auth/signin" className="text-blue-600 hover:text-blue-800">
-          Sign in
-        </Link>
-      </p>
-    </form>
+        <div className="text-center">
+          <Link
+            href="/auth/signin"
+            className="inline-flex items-center px-4 py-2 text-emerald-600 hover:text-emerald-800 font-medium rounded-lg hover:bg-emerald-50 transition-all duration-200"
+          >
+            Sign in to your account
+          </Link>
+        </div>
+      </form>
+    </div>
   );
 }
