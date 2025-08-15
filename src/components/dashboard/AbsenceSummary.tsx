@@ -91,7 +91,7 @@ export default function AbsenceSummary() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center p-8">
+      <div className="flex flex-col gap-y-2 items-center justify-center p-8">
         <Loader/>
         <div className="text-emerald-600">Loading summary...</div>
       </div>
