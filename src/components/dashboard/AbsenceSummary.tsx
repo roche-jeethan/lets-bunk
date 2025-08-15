@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Loader from "../ui/Loader";
 
 type SubjectCount = {
   subject: string;
@@ -91,6 +92,7 @@ export default function AbsenceSummary() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
+        <Loader/>
         <div className="text-emerald-600">Loading summary...</div>
       </div>
     );

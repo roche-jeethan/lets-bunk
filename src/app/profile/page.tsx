@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Loader from "@/components/ui/Loader";
 
 type UserProfile = {
   email: string;
@@ -57,7 +58,7 @@ export default function Profile() {
     return (
       <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white p-4 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-8 h-8 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin mx-auto"></div>
+          <Loader/>
           <p className="text-emerald-700 mt-4">Loading profile...</p>
         </div>
       </div>
