@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useAbsences } from "@/hooks/useAbsences";
 import Loader from "../ui/Loader";
 
 type SubjectCount = {
@@ -8,86 +8,30 @@ type SubjectCount = {
   count: number;
 };
 
-type Absence = {
-  id: string;
-  subject: string;
-  date: string;
-  reason: string | null;
-  userId: string;
-};
-
 export default function AbsenceSummary() {
-  const [subjectCounts, setSubjectCounts] = useState<SubjectCount[]>([]);
-  const [totalAbsences, setTotalAbsences] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetchAbsenceCounts();
-    window.addEventListener("absenceCreated", fetchAbsenceCounts);
-    return () =>
-      window.removeEventListener("absenceCreated", fetchAbsenceCounts);
-  }, []);
-
-  const fetchAbsenceCounts = async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-
-      console.log("Fetching absence summary...");
-
-      const response = await fetch("/api/absences", {
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        const errorData = await response
-          .json()
-          .catch(() => ({ error: "Failed to parse error response" }));
-        throw new Error(
-          errorData.error || `HTTP ${response.status}: ${response.statusText}`
-        );
-      }
-
-      const data = await response.json();
-      console.log("Raw API response for summary:", data);
-
-      const absencesData = data.absences || data || [];
-      if (!Array.isArray(absencesData)) {
-        console.error(
-          "Expected array but got:",
-          typeof absencesData,
-          absencesData
-        );
-        throw new Error("Invalid data format: expected array of absences");
-      }
-
-      console.log("Processing absences for summary:", absencesData);
-      const counts = absencesData.reduce(
-        (acc: Record<string, number>, absence: Absence) => {
-          acc[absence.subject] = (acc[absence.subject] || 0) + 1;
-          return acc;
-        },
-        {}
-      );
-      const sortedCounts = Object.entries(counts)
-        .map(([subject, count]) => ({ subject, count: count as number }))
-        .sort((a, b) => b.count - a.count);
-
-      setSubjectCounts(sortedCounts);
-      setTotalAbsences(absencesData.length);
-    } catch (err) {
-      console.error("Error fetching absence summary:", err);
-      setError(err instanceof Error ? err.message : "Failed to load summary");
-      setSubjectCounts([]);
-      setTotalAbsences(0);
-    } finally {
-      setIsLoading(false);
-    }
+  const { data: absences, isLoading, error, refetch } = useAbsences();
+  const processData = () => {
+    if (!absences) return { subjectCounts: [], totalAbsences: 0 };
+    
+    const counts = absences.reduce(
+      (acc: Record<string, number>, absence: any) => {
+        acc[absence.subject] = (acc[absence.subject] || 0) + 1;
+        return acc;
+      },
+      {}
+    );
+    
+    const sortedCounts = Object.entries(counts)
+      .map(([subject, count]) => ({ subject, count: count as number }))
+      .sort((a, b) => b.count - a.count);
+      
+    return {
+      subjectCounts: sortedCounts,
+      totalAbsences: absences.length
+    };
   };
+
+  const { subjectCounts, totalAbsences } = processData();
 
   if (isLoading) {
     return (
@@ -102,9 +46,9 @@ export default function AbsenceSummary() {
     return (
       <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
         <p className="text-red-600 font-medium">Error loading summary</p>
-        <p className="text-red-500 text-sm mt-1">{error}</p>
+        <p className="text-red-500 text-sm mt-1">{(error as Error).message}</p>
         <button
-          onClick={fetchAbsenceCounts}
+          onClick={() => refetch()}
           className="mt-2 px-3 py-1 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition-colors"
         >
           Try Again
