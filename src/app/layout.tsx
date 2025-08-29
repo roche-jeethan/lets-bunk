@@ -1,17 +1,13 @@
 import type { Metadata } from "next";
 import { Providers } from "./providers";
+import { ThemeProvider } from "next-themes";
 import { createServerSupabaseClient } from "@/lib/supabase-server";
-import { Geist, Geist_Mono } from "next/font/google";
+import { DM_Sans } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = DM_Sans({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: "400"
 });
 
 export const metadata: Metadata = {
@@ -40,10 +36,8 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <Providers>{children}</Providers>
+      <body className={`${inter.className} antialiased`}>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem={true}><Providers>{children}</Providers></ThemeProvider>
       </body>
     </html>
   );
