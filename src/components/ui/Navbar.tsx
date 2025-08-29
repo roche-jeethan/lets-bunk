@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import ThemeToggler from "./ThemeButton";
 
 export default function Navbar() {
   const [isInstallable, setIsInstallable] = useState(false);
@@ -69,6 +70,7 @@ export default function Navbar() {
             >
               Sign In
             </Link>
+            <ThemeToggler/>
           </div>
           <div className="flex items-center sm:hidden">
             <button

@@ -1,4 +1,5 @@
 module.exports = {
+  darkMode: 'class',
   extend: {
     animation: {
       'fade-in': 'fadeIn 0.5s ease-in',
