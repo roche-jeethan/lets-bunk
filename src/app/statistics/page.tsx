@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Loader from "@/components/ui/Loader";
+import ThemeToggler from "@/components/ui/ThemeButton";
 
 type Statistics = {
   totalAbsences: number;
@@ -131,6 +132,7 @@ export default function Statistics() {
               </svg>
               Back to Dashboard
             </Link>
+            <ThemeToggler/>
           </div>
         </div>
       </nav>
