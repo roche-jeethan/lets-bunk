@@ -58,10 +58,12 @@ export default function Statistics() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white p-4 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white dark:from-slate-900 dark:to-slate-800 p-4 flex items-center justify-center">
         <div className="text-center">
-          <Loader/>
-          <p className="text-emerald-700 mt-4">Loading statistics...</p>
+          <Loader />
+          <p className="text-emerald-700 dark:text-emerald-300 mt-4">
+            Loading statistics...
+          </p>
         </div>
       </div>
     );
@@ -69,11 +71,11 @@ export default function Statistics() {
 
   if (error || !statistics) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white p-4 flex items-center justify-center">
-        <div className="text-center bg-white rounded-2xl border border-emerald-200 shadow-lg p-8">
-          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+      <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white dark:from-slate-900 dark:to-slate-800 p-4 flex items-center justify-center">
+        <div className="text-center bg-white dark:bg-slate-800 rounded-2xl border border-emerald-200 dark:border-slate-700 shadow-lg p-8">
+          <div className="w-16 h-16 bg-red-100 dark:bg-red-950 rounded-full flex items-center justify-center mx-auto mb-4">
             <svg
-              className="w-8 h-8 text-red-600"
+              className="w-8 h-8 text-red-600 dark:text-red-300"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -86,12 +88,12 @@ export default function Statistics() {
               />
             </svg>
           </div>
-          <p className="text-red-600 mb-4 font-medium">
+          <p className="text-red-600 dark:text-red-300 mb-4 font-medium">
             {error || "Failed to load statistics"}
           </p>
           <Link
             href="/dashboard"
-            className="inline-flex items-center px-4 py-2 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 transition-colors"
+            className="inline-flex items-center px-4 py-2 bg-emerald-600 dark:bg-emerald-500 text-white font-medium rounded-lg hover:bg-emerald-700 dark:hover:bg-emerald-600 transition-colors"
           >
             Return to Dashboard
           </Link>
@@ -101,18 +103,18 @@ export default function Statistics() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white">
-      <nav className="bg-white border-b border-emerald-200 shadow-sm">
+    <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white dark:from-slate-900 dark:to-slate-800">
+      <nav className="bg-white dark:bg-slate-900 border-b border-emerald-200 dark:border-slate-700 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-emerald-900">
+              <h1 className="text-2xl font-bold text-emerald-900 dark:text-emerald-100">
                 Statistics
               </h1>
             </div>
             <Link
               href="/dashboard"
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-emerald-700 hover:text-emerald-900 hover:bg-emerald-50 rounded-lg transition-all duration-200"
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-emerald-700 dark:text-emerald-300 hover:text-emerald-900 dark:hover:text-emerald-100 hover:bg-emerald-50 dark:hover:bg-slate-800 rounded-lg transition-all duration-200"
             >
               <svg
                 className="w-4 h-4"
@@ -135,17 +137,17 @@ export default function Statistics() {
 
       <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-emerald-900">
+          <h2 className="text-3xl font-bold text-emerald-900 dark:text-emerald-100">
             Attendance Statistics
           </h2>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          <div className="lg:col-span-4 bg-white rounded-2xl border border-emerald-200 shadow-lg p-6">
+          <div className="lg:col-span-4 bg-white dark:bg-slate-800 rounded-2xl border border-emerald-200 dark:border-slate-700 shadow-lg p-6">
             <div className="flex items-center mb-4">
-              <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center mr-3">
+              <div className="w-10 h-10 bg-emerald-100 dark:bg-slate-900 rounded-lg flex items-center justify-center mr-3">
                 <svg
-                  className="w-6 h-6 text-emerald-600"
+                  className="w-6 h-6 text-emerald-600 dark:text-emerald-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -158,23 +160,25 @@ export default function Statistics() {
                   />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-emerald-800">
+              <h3 className="text-lg font-semibold text-emerald-800 dark:text-emerald-200">
                 Total Absences
               </h3>
             </div>
             <div className="text-center py-4">
-              <div className="text-4xl font-bold text-emerald-600 mb-2">
+              <div className="text-4xl font-bold text-emerald-600 dark:text-emerald-400 mb-2">
                 {statistics.totalAbsences}
               </div>
-              <div className="text-emerald-700 font-medium">Classes Missed</div>
+              <div className="text-emerald-700 dark:text-emerald-300 font-medium">
+                Classes Missed
+              </div>
             </div>
           </div>
 
-          <div className="lg:col-span-4 bg-white rounded-2xl border border-emerald-200 shadow-lg p-6">
+          <div className="lg:col-span-4 bg-white dark:bg-slate-800 rounded-2xl border border-emerald-200 dark:border-slate-700 shadow-lg p-6">
             <div className="flex items-center mb-4">
-              <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center mr-3">
+              <div className="w-10 h-10 bg-emerald-100 dark:bg-slate-900 rounded-lg flex items-center justify-center mr-3">
                 <svg
-                  className="w-6 h-6 text-emerald-600"
+                  className="w-6 h-6 text-emerald-600 dark:text-emerald-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -187,15 +191,15 @@ export default function Statistics() {
                   />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-emerald-800">
+              <h3 className="text-lg font-semibold text-emerald-800 dark:text-emerald-200">
                 Most Missed
               </h3>
             </div>
             <div className="text-center py-4">
-              <div className="text-2xl font-bold text-emerald-600 mb-1">
+              <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mb-1">
                 {statistics.mostMissedSubject?.subject || "N/A"}
               </div>
-              <div className="text-emerald-700 font-medium">
+              <div className="text-emerald-700 dark:text-emerald-300 font-medium">
                 {statistics.mostMissedSubject
                   ? `${statistics.mostMissedSubject.count} times`
                   : "No data"}
@@ -203,11 +207,11 @@ export default function Statistics() {
             </div>
           </div>
 
-          <div className="lg:col-span-4 bg-white rounded-2xl border border-emerald-200 shadow-lg p-6">
+          <div className="lg:col-span-4 bg-white dark:bg-slate-800 rounded-2xl border border-emerald-200 dark:border-slate-700 shadow-lg p-6">
             <div className="flex items-center mb-4">
-              <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center mr-3">
+              <div className="w-10 h-10 bg-emerald-100 dark:bg-slate-900 rounded-lg flex items-center justify-center mr-3">
                 <svg
-                  className="w-6 h-6 text-emerald-600"
+                  className="w-6 h-6 text-emerald-600 dark:text-emerald-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -220,12 +224,12 @@ export default function Statistics() {
                   />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-emerald-800">
+              <h3 className="text-lg font-semibold text-emerald-800 dark:text-emerald-200">
                 Last Absence
               </h3>
             </div>
             <div className="text-center py-4">
-              <div className="text-lg font-bold text-emerald-600 mb-1">
+              <div className="text-lg font-bold text-emerald-600 dark:text-emerald-400 mb-1">
                 {statistics.lastAbsence
                   ? new Date(statistics.lastAbsence.date).toLocaleDateString(
                       "en-US",
@@ -236,20 +240,22 @@ export default function Statistics() {
                     )
                   : "N/A"}
               </div>
-              <div className="text-emerald-700 font-medium">
+              <div className="text-emerald-700 dark:text-emerald-300 font-medium">
                 {statistics.lastAbsence?.subject || "No recent absences"}
               </div>
             </div>
           </div>
-          <div className="lg:col-span-8 bg-white rounded-2xl border border-emerald-200 shadow-lg p-6">
-            <h3 className="text-xl font-semibold text-emerald-800 mb-6">
+          <div className="lg:col-span-8 bg-white dark:bg-slate-800 rounded-2xl border border-emerald-200 dark:border-slate-700 shadow-lg p-6">
+            <h3 className="text-xl font-semibold text-emerald-800 dark:text-emerald-200 mb-6">
               Subject-wise Breakdown
             </h3>
 
             {Object.keys(statistics.subjectCounts).length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-emerald-600">No subject data available</p>
-                <p className="text-emerald-500 text-sm mt-1">
+                <p className="text-emerald-600 dark:text-emerald-400">
+                  No subject data available
+                </p>
+                <p className="text-emerald-500 dark:text-emerald-500 text-sm mt-1">
                   Start adding absences to see breakdown
                 </p>
               </div>
@@ -259,15 +265,15 @@ export default function Statistics() {
                   ([subject, count]) => (
                     <div
                       key={subject}
-                      className="bg-emerald-50 border border-emerald-200 p-4 rounded-xl text-center hover:bg-emerald-100 transition-colors"
+                      className="bg-emerald-50 dark:bg-slate-700 border border-emerald-200 dark:border-slate-600 p-4 rounded-xl text-center hover:bg-emerald-100 dark:hover:bg-slate-600 transition-colors"
                     >
-                      <div className="text-2xl font-bold text-emerald-700 mb-1">
+                      <div className="text-2xl font-bold text-emerald-700 dark:text-emerald-300 mb-1">
                         {count}
                       </div>
-                      <div className="text-sm text-emerald-600 font-medium break-words">
+                      <div className="text-sm text-emerald-600 dark:text-emerald-400 font-medium break-words">
                         {subject}
                       </div>
-                      <div className="text-xs text-emerald-500 mt-1">
+                      <div className="text-xs text-emerald-500 dark:text-emerald-500 mt-1">
                         absences
                       </div>
                     </div>
@@ -276,17 +282,17 @@ export default function Statistics() {
               </div>
             )}
           </div>
-          <div className="lg:col-span-4 bg-white rounded-2xl border border-emerald-200 shadow-lg p-6">
-            <h3 className="text-xl font-semibold text-emerald-800 mb-6">
+          <div className="lg:col-span-4 bg-white dark:bg-slate-800 rounded-2xl border border-emerald-200 dark:border-slate-700 shadow-lg p-6">
+            <h3 className="text-xl font-semibold text-emerald-800 dark:text-emerald-200 mb-6">
               Quick Insights
             </h3>
 
             <div className="space-y-4">
-              <div className="bg-gradient-to-r from-emerald-100 to-emerald-50 border border-emerald-200 rounded-xl p-4">
-                <div className="text-sm text-emerald-800 font-medium mb-1">
+              <div className="bg-gradient-to-r from-emerald-100 to-emerald-50 dark:from-slate-700 dark:to-slate-600 border border-emerald-200 dark:border-slate-600 rounded-xl p-4">
+                <div className="text-sm text-emerald-800 dark:text-emerald-200 font-medium mb-1">
                   Average per Subject
                 </div>
-                <div className="text-lg font-bold text-emerald-700">
+                <div className="text-lg font-bold text-emerald-700 dark:text-emerald-300">
                   {Object.keys(statistics.subjectCounts).length > 0
                     ? (
                         statistics.totalAbsences /
@@ -296,42 +302,44 @@ export default function Statistics() {
                 </div>
               </div>
 
-              <div className="bg-gradient-to-r from-emerald-100 to-emerald-50 border border-emerald-200 rounded-xl p-4">
-                <div className="text-sm text-emerald-800 font-medium mb-1">
+              <div className="bg-gradient-to-r from-emerald-100 to-emerald-50 dark:from-slate-700 dark:to-slate-600 border border-emerald-200 dark:border-slate-600 rounded-xl p-4">
+                <div className="text-sm text-emerald-800 dark:text-emerald-200 font-medium mb-1">
                   Subjects Tracked
                 </div>
-                <div className="text-lg font-bold text-emerald-700">
+                <div className="text-lg font-bold text-emerald-700 dark:text-emerald-300">
                   {Object.keys(statistics.subjectCounts).length}
                 </div>
               </div>
             </div>
           </div>
-          <div className="lg:col-span-12 bg-white rounded-2xl border border-emerald-200 shadow-lg p-6">
-            <h3 className="text-xl font-semibold text-emerald-800 mb-6">
+          <div className="lg:col-span-12 bg-white dark:bg-slate-800 rounded-2xl border border-emerald-200 dark:border-slate-700 shadow-lg p-6">
+            <h3 className="text-xl font-semibold text-emerald-800 dark:text-emerald-200 mb-6">
               Recent Absence History
             </h3>
 
             {statistics.absenceHistory.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-emerald-600">No absence history available</p>
-                <p className="text-emerald-500 text-sm mt-1">
+                <p className="text-emerald-600 dark:text-emerald-400">
+                  No absence history available
+                </p>
+                <p className="text-emerald-500 dark:text-emerald-500 text-sm mt-1">
                   Your absence records will appear here
                 </p>
               </div>
             ) : (
-              <div className="space-y-3 max-h-96 overflow-y-auto">
+              <div className="space-y-3 max-h-96 overflow-y-auto scrollbar-custom">
                 {statistics.absenceHistory.map((absence) => (
                   <div
                     key={absence.id}
-                    className="border border-emerald-200 p-4 rounded-lg hover:shadow-md hover:border-emerald-300 transition-all duration-200 bg-emerald-50"
+                    className="border border-emerald-200 dark:border-slate-600 p-4 rounded-lg hover:shadow-md hover:border-emerald-300 dark:hover:border-slate-500 transition-all duration-200 bg-emerald-50 dark:bg-slate-700"
                   >
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
-                          <div className="font-semibold text-emerald-900">
+                          <div className="font-semibold text-emerald-900 dark:text-emerald-100">
                             {absence.subject}
                           </div>
-                          <div className="text-sm text-emerald-600 bg-emerald-100 px-2 py-1 rounded-full">
+                          <div className="text-sm text-emerald-600 dark:text-emerald-300 bg-emerald-100 dark:bg-slate-600 px-2 py-1 rounded-full">
                             {new Date(absence.date).toLocaleDateString(
                               "en-US",
                               {
@@ -343,7 +351,7 @@ export default function Statistics() {
                           </div>
                         </div>
                         {absence.reason && (
-                          <p className="text-sm text-emerald-600 italic">
+                          <p className="text-sm text-emerald-600 dark:text-emerald-300 italic">
                             Reason: {absence.reason}
                           </p>
                         )}
