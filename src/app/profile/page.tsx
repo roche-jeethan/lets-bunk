@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Loader from "@/components/ui/Loader";
+import ThemeToggler from "@/components/ui/ThemeButton";
 
 type UserProfile = {
   email: string;
@@ -56,10 +57,12 @@ export default function Profile() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white p-4 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white dark:from-slate-900 dark:to-slate-800 p-4 flex items-center justify-center">
         <div className="text-center">
-          <Loader/>
-          <p className="text-emerald-700 mt-4">Loading profile...</p>
+          <Loader />
+          <p className="text-emerald-700 dark:text-emerald-300 mt-4">
+            Loading profile...
+          </p>
         </div>
       </div>
     );
@@ -67,11 +70,11 @@ export default function Profile() {
 
   if (error || !profile) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white p-4 flex items-center justify-center">
-        <div className="text-center bg-white rounded-2xl border border-emerald-200 shadow-lg p-8">
-          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+      <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white dark:from-slate-900 dark:to-slate-800 p-4 flex items-center justify-center">
+        <div className="text-center bg-white dark:bg-slate-800 rounded-2xl border border-emerald-200 dark:border-slate-700 shadow-lg p-8">
+          <div className="w-16 h-16 bg-red-100 dark:bg-red-950 rounded-full flex items-center justify-center mx-auto mb-4">
             <svg
-              className="w-8 h-8 text-red-600"
+              className="w-8 h-8 text-red-600 dark:text-red-300"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -84,12 +87,12 @@ export default function Profile() {
               />
             </svg>
           </div>
-          <p className="text-red-600 mb-4 font-medium">
+          <p className="text-red-600 dark:text-red-300 mb-4 font-medium">
             {error || "Failed to load profile"}
           </p>
           <Link
             href="/dashboard"
-            className="inline-flex items-center px-4 py-2 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 transition-colors"
+            className="inline-flex items-center px-4 py-2 bg-emerald-600 dark:bg-emerald-500 text-white font-medium rounded-lg hover:bg-emerald-700 dark:hover:bg-emerald-600 transition-colors"
           >
             Return to Dashboard
           </Link>
@@ -99,16 +102,18 @@ export default function Profile() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white">
-      <nav className="bg-white border-b border-emerald-200 shadow-sm">
+    <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white dark:from-slate-900 dark:to-slate-800">
+      <nav className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-b border-emerald-200 dark:border-slate-700 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-emerald-900">Profile</h1>
+              <h1 className="text-2xl font-bold text-emerald-900 dark:text-emerald-100">
+                Profile
+              </h1>
             </div>
             <Link
               href="/dashboard"
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-emerald-700 hover:text-emerald-900 hover:bg-emerald-50 rounded-lg transition-all duration-200"
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-emerald-700 dark:text-emerald-300 hover:text-emerald-900 dark:hover:text-emerald-100 hover:bg-emerald-50 dark:hover:bg-slate-800 rounded-lg transition-all duration-200"
             >
               <svg
                 className="w-4 h-4"
@@ -125,17 +130,18 @@ export default function Profile() {
               </svg>
               Back to Dashboard
             </Link>
+            <ThemeToggler/>
           </div>
         </div>
       </nav>
 
       <div className="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          <div className="lg:col-span-8 bg-white rounded-2xl border border-emerald-200 shadow-lg p-8">
+          <div className="lg:col-span-8 bg-white dark:bg-slate-800 rounded-2xl border border-emerald-200 dark:border-slate-700 shadow-lg dark:shadow-slate-900/20 p-8">
             <div className="flex items-center mb-8">
-              <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mr-6">
+              <div className="w-16 h-16 bg-emerald-100 dark:bg-slate-900 rounded-full flex items-center justify-center mr-6">
                 <svg
-                  className="w-8 h-8 text-emerald-600"
+                  className="w-8 h-8 text-emerald-600 dark:text-emerald-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -149,39 +155,41 @@ export default function Profile() {
                 </svg>
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-emerald-900">
+                <h2 className="text-2xl font-bold text-emerald-900 dark:text-emerald-100">
                   Account Information
                 </h2>
-                <p className="text-emerald-600">Manage your personal details</p>
+                <p className="text-emerald-600 dark:text-emerald-400">
+                  Manage your personal details
+                </p>
               </div>
             </div>
 
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-6">
-                  <h3 className="text-sm font-semibold text-emerald-800 mb-2">
+                <div className="bg-emerald-50 dark:bg-slate-700 border border-emerald-200 dark:border-slate-600 rounded-xl p-6">
+                  <h3 className="text-sm font-semibold text-emerald-800 dark:text-emerald-200 mb-2">
                     Email Address
                   </h3>
-                  <p className="text-lg text-emerald-900 font-medium">
+                  <p className="text-lg text-emerald-900 dark:text-emerald-100 font-medium">
                     {profile.email}
                   </p>
                 </div>
 
-                <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-6">
-                  <h3 className="text-sm font-semibold text-emerald-800 mb-2">
+                <div className="bg-emerald-50 dark:bg-slate-700 border border-emerald-200 dark:border-slate-600 rounded-xl p-6">
+                  <h3 className="text-sm font-semibold text-emerald-800 dark:text-emerald-200 mb-2">
                     Full Name
                   </h3>
-                  <p className="text-lg text-emerald-900 font-medium">
+                  <p className="text-lg text-emerald-900 dark:text-emerald-100 font-medium">
                     {profile.name || "Not set"}
                   </p>
                 </div>
               </div>
 
-              <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-6">
-                <h3 className="text-sm font-semibold text-emerald-800 mb-2">
+              <div className="bg-emerald-50 dark:bg-slate-700 border border-emerald-200 dark:border-slate-600 rounded-xl p-6">
+                <h3 className="text-sm font-semibold text-emerald-800 dark:text-emerald-200 mb-2">
                   Account Created
                 </h3>
-                <p className="text-lg text-emerald-900 font-medium">
+                <p className="text-lg text-emerald-900 dark:text-emerald-100 font-medium">
                   {new Date(profile.created_at).toLocaleDateString("en-US", {
                     weekday: "long",
                     year: "numeric",
@@ -194,30 +202,30 @@ export default function Profile() {
           </div>
 
           <div className="lg:col-span-4 space-y-6">
-            <div className="bg-white rounded-2xl border border-emerald-200 shadow-lg p-6">
-              <h3 className="text-xl font-semibold text-emerald-800 mb-6">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-emerald-200 dark:border-slate-700 shadow-lg dark:shadow-slate-900/20 p-6">
+              <h3 className="text-xl font-semibold text-emerald-800 dark:text-emerald-200 mb-6">
                 Quick Stats
               </h3>
 
               <div className="space-y-4">
-                <div className="bg-gradient-to-r from-emerald-100 to-emerald-50 border border-emerald-200 rounded-xl p-6 text-center">
-                  <div className="text-3xl font-bold text-emerald-700 mb-1">
+                <div className="bg-gradient-to-r from-emerald-100 to-emerald-50 dark:from-slate-700 dark:to-slate-600 border border-emerald-200 dark:border-slate-600 rounded-xl p-6 text-center">
+                  <div className="text-3xl font-bold text-emerald-700 dark:text-emerald-300 mb-1">
                     {profile.totalAbsences || 0}
                   </div>
-                  <div className="text-emerald-600 font-medium">
+                  <div className="text-emerald-600 dark:text-emerald-400 font-medium">
                     Total Absences
                   </div>
                 </div>
 
-                <div className="bg-gradient-to-r from-emerald-100 to-emerald-50 border border-emerald-200 rounded-xl p-6 text-center">
-                  <div className="text-lg font-bold text-emerald-700 mb-1">
+                <div className="bg-gradient-to-r from-emerald-100 to-emerald-50 dark:from-slate-700 dark:to-slate-600 border border-emerald-200 dark:border-slate-600 rounded-xl p-6 text-center">
+                  <div className="text-lg font-bold text-emerald-700 dark:text-emerald-300 mb-1">
                     {profile.mostMissedSubject?.subject || "None"}
                   </div>
-                  <div className="text-emerald-600 font-medium">
+                  <div className="text-emerald-600 dark:text-emerald-400 font-medium">
                     Most Missed Subject
                   </div>
                   {profile.mostMissedSubject && (
-                    <div className="text-sm text-emerald-500 mt-1">
+                    <div className="text-sm text-emerald-500 dark:text-emerald-500 mt-1">
                       {profile.mostMissedSubject.count} absences
                     </div>
                   )}
@@ -225,20 +233,20 @@ export default function Profile() {
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl border border-emerald-200 shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-emerald-800 mb-4">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-emerald-200 dark:border-slate-700 shadow-lg dark:shadow-slate-900/20 p-6">
+              <h3 className="text-lg font-semibold text-emerald-800 dark:text-emerald-200 mb-4">
                 Quick Actions
               </h3>
               <div className="space-y-3">
                 <Link
                   href="/dashboard"
-                  className="block w-full px-4 py-3 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 transition-colors text-center"
+                  className="block w-full px-4 py-3 bg-emerald-600 dark:bg-emerald-500 text-white font-medium rounded-lg hover:bg-emerald-700 dark:hover:bg-emerald-600 transition-colors text-center"
                 >
                   Add New Absence
                 </Link>
                 <Link
                   href="/statistics"
-                  className="block w-full px-4 py-3 border-2 border-emerald-600 text-emerald-700 font-medium rounded-lg hover:bg-emerald-50 transition-colors text-center"
+                  className="block w-full px-4 py-3 border-2 border-emerald-600 dark:border-emerald-500 text-emerald-700 dark:text-emerald-300 font-medium rounded-lg hover:bg-emerald-50 dark:hover:bg-slate-700 transition-colors text-center"
                 >
                   View Statistics
                 </Link>
