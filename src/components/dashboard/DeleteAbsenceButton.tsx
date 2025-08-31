@@ -27,12 +27,14 @@ export default function DeleteAbsenceButton({
   return (
     <div className="flex flex-col items-end">
       {isError && (
-        <p className="text-red-500 text-xs mb-1">{(error as Error).message}</p>
+        <p className="text-red-500 dark:text-red-300 text-xs mb-1">
+          {(error as Error).message}
+        </p>
       )}
       <button
         onClick={handleDelete}
         disabled={isPending}
-        className="text-red-500 hover:text-red-700 disabled:text-gray-400 transition-colors"
+        className="text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 disabled:text-gray-400 dark:disabled:text-gray-600 transition-colors"
         title="Delete absence"
       >
         <svg

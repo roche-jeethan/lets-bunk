@@ -20,12 +20,14 @@ export default async function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white">
-      <nav className="bg-white border-b border-emerald-200 shadow-sm">
+    <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white dark:from-slate-900 dark:to-slate-800">
+      <nav className="bg-white dark:bg-slate-900 border-b border-emerald-200 dark:border-slate-700 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-emerald-900">LetsBunk</h1>
+              <h1 className="text-2xl font-bold text-emerald-900 dark:text-emerald-100">
+                LetsBunk
+              </h1>
             </div>
             <div className="flex items-center space-x-4">
               <StatsButton />
@@ -38,30 +40,32 @@ export default async function Dashboard() {
 
       <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-emerald-900">Dashboard</h2>
-          <p className="text-emerald-700 mt-2">
+          <h2 className="text-3xl font-bold text-emerald-900 dark:text-emerald-100">
+            Dashboard
+          </h2>
+          <p className="text-emerald-700 dark:text-emerald-300 mt-2">
             Track and manage your attendance
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          <div className="lg:col-span-5 bg-white rounded-2xl border border-emerald-200 shadow-lg p-6">
-            <h3 className="text-xl font-semibold text-emerald-800 mb-6">
+          <div className="lg:col-span-5 bg-white dark:bg-slate-800 rounded-2xl border border-emerald-200 dark:border-slate-700 shadow-lg dark:shadow-slate-900/20 p-6">
+            <h3 className="text-xl font-semibold text-emerald-800 dark:text-emerald-200 mb-6">
               Add New Absence
             </h3>
             <AddAbsenceForm />
           </div>
 
-          <div className="lg:col-span-7 bg-white rounded-2xl border border-emerald-200 shadow-lg p-6">
-            <h3 className="text-xl font-semibold text-emerald-800 mb-6">
+          <div className="lg:col-span-7 bg-white dark:bg-slate-800 rounded-2xl border border-emerald-200 dark:border-slate-700 shadow-lg dark:shadow-slate-900/20 p-6">
+            <h3 className="text-xl font-semibold text-emerald-800 dark:text-emerald-200 mb-6">
               Recent Absences
             </h3>
-            <div className="max-h-96 overflow-y-auto">
+            <div className="max-h-96 overflow-y-auto scrollbar-custom">
               <AbsenceList />
             </div>
           </div>
 
-          <div className="lg:col-span-12 bg-white rounded-2xl border border-emerald-200 shadow-lg p-6">
+          <div className="lg:col-span-12 bg-white dark:bg-slate-800 rounded-2xl border border-emerald-200 dark:border-slate-700 shadow-lg dark:shadow-slate-900/20 p-6">
             <AbsenceSummary />
           </div>
         </div>

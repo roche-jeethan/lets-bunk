@@ -11,19 +11,25 @@ export default function AbsenceList() {
     return (
       <div className="flex flex-col gap-y-2 items-center justify-center p-8">
         <Loader />
-        <div className="text-emerald-600">Loading absences...</div>
+        <div className="text-emerald-600 dark:text-emerald-400">
+          Loading absences...
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-        <p className="text-red-600 font-medium">Error loading absences</p>
-        <p className="text-red-500 text-sm mt-1">{(error as Error).message}</p>
+      <div className="p-4 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg">
+        <p className="text-red-600 dark:text-red-300 font-medium">
+          Error loading absences
+        </p>
+        <p className="text-red-500 dark:text-red-400 text-sm mt-1">
+          {(error as Error).message}
+        </p>
         <button
           onClick={() => refetch()}
-          className="mt-2 px-3 py-1 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition-colors"
+          className="mt-2 px-3 py-1 bg-red-600 dark:bg-red-500 text-white text-sm rounded-lg hover:bg-red-700 dark:hover:bg-red-600 transition-colors"
         >
           Try Again
         </button>
@@ -35,13 +41,15 @@ export default function AbsenceList() {
     <div className="space-y-4">
       {absences && absences.length === 0 ? (
         <div className="text-center py-8">
-          <p className="text-emerald-600">No absences recorded yet.</p>
+          <p className="text-emerald-600 dark:text-emerald-400">
+            No absences recorded yet.
+          </p>
           <p className="text-emerald-500 text-sm mt-1">
             Add your first absence using the form.
           </p>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-3 scrollbar-custom">
           {absences &&
             absences
               .slice()
@@ -52,14 +60,14 @@ export default function AbsenceList() {
               .map((absence: any) => (
                 <div
                   key={absence.id}
-                  className="border border-emerald-200 p-4 rounded-lg hover:shadow-md hover:border-emerald-300 transition-all duration-200 bg-emerald-50"
+                  className="border border-emerald-200 dark:border-slate-600 p-4 rounded-lg hover:shadow-md hover:border-emerald-300 dark:hover:border-slate-500 transition-all duration-200 bg-emerald-50 dark:bg-slate-700"
                 >
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
-                      <p className="font-semibold text-emerald-900">
+                      <p className="font-semibold text-emerald-900 dark:text-emerald-100">
                         {absence.subject}
                       </p>
-                      <p className="text-sm text-emerald-700 mt-1">
+                      <p className="text-sm text-emerald-700 dark:text-emerald-300 mt-1">
                         {new Date(absence.date).toLocaleDateString("en-US", {
                           weekday: "long",
                           year: "numeric",
